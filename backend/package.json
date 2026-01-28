@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "set NODE_OPTIONS=--experimental-vm-modules && jest",
     "data:import": "node seedScript.js",
     "data:destroy": "node seedScript.js -d"
   },
@@ -18,5 +18,8 @@
     "express": "^5.2.1",
     "mongoose": "^9.1.5",
     "nodemon": "^3.1.11"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0"
   }
 }
