@@ -1,22 +1,22 @@
-import { jest } from '@jest/globals';
+import { describe, it, jest } from '@jest/globals';
+
+// Mock the Role model
+jest.unstable_mockModule(
+    '../models/roleModel.js',
+    () => ({
+        default: {
+            find: jest.fn(),
+        },
+    })
+);
+
+// Import the service AFTER mocking
+const { default: Role } = await import("../models/roleModel.js");
+const { default: roleService } = await import('../services/RoleService.js');
 
 describe('getRoles service', () => {
-    it('returns all roles', async () => {
-        
-        // Mock the Role model
-        jest.unstable_mockModule(
-            '../models/roleModel.js',
-            () => ({
-                default: {
-                    find: jest.fn(),
-                },
-            })
-        );
 
-        // Import the service AFTER mocking
-        const { default: Role } = await import("../models/roleModel.js");
-        const { default: roleService } = await import('../services/RoleService.js');
-
+    it('should return all roles when successful', async () => {
         const mockRoles = [
 
             {
@@ -44,4 +44,10 @@ describe('getRoles service', () => {
         expect(Role.find).toHaveBeenCalledWith({});
         expect(roles).toEqual(mockRoles);
     });
+
+    it('should return error when database fails', async () => {
+        Role.find.mockRejectedValue(new Error('Database error'));
+
+        await expect(roleService.getRoles()).rejects.toThrow('Database error');
+    })
 });

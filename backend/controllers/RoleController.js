@@ -11,4 +11,4 @@ const getRoles = async (req, res) => {
     }
 };
 
-export { getRoles };
+export default { getRoles };
