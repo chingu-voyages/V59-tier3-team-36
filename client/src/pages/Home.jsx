@@ -32,13 +32,25 @@ function Home() {
           <Button  buttonText='Get Started' icon={<ArrowRight />} onButtonClick={() => console.log('get started')} className='text-center' />
         </div>
 
-      <div>
-        <h3>what you'll get:</h3>
-        <ul>
-          <li>curated interview questions for each chingu role</li>
-          <li>Multiple choice format with detailed explanations</li>
-          <li>Performance trackinng and statistics</li>
-          <li>Practice as many times as you need to build confidence</li>
+      <div className='bg-emerald-50 rounded-lg p-6 mt-8 border border-emerald-100'>
+        <h3 className='text-lg font-semibold text-gray-900 mb-3'>What You'll Get:</h3>
+        <ul className='space-y-2 text-gray-700' >
+          <li className='flex items-start gap-2' >
+            <CheckCircle className="size-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+            <span>curated interview questions for each chingu role</span>
+          </li>
+          <li className='flex items-start gap-2' >
+            <CheckCircle className="size-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+            <span>Multiple choice format with detailed explanations</span>
+          </li>
+          <li className='flex items-start gap-2' >
+            <CheckCircle className="size-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+            <span>Performance trackinng and statistics</span>
+          </li>
+          <li className='flex items-start gap-2' >
+            <CheckCircle className="size-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+            <span>Practice as many times as you need to build confidence</span>
+          </li>
         </ul>
       </div>
 
