@@ -8,14 +8,14 @@ function Card({ title, description, icon, buttonText, onButtonClick, buttonVaria
     }
 
   return (
-    <div className={'bg-white rounded-xl shadow-sm border p-6 hover:shadow-md transition'} >
+    <div className={'bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition'} >
         {icon && (
-            <div className='mb-4 text-blue-600'>
+            <div className='mb-4'>
                 {icon}
             </div>
         )}
         {title && (
-            <h3 className='text-lg text-green-600 font-semibold mb-2' >
+            <h3 className='text-lg text-black font-semibold mb-2' >
                 {title}
             </h3>
         )}
