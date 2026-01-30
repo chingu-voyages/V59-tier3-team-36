@@ -21,5 +21,5 @@ const questionSchema = new mongoose.Schema(
 );
 
 const Question =
-  mongoose.models.Question || mongoose.model("Question", questionSchema); //“Ensure the Question model exists exactly once.”
+  mongoose.models.Question || mongoose.model("Question", questionSchema); //OR ensures the Question model exists exactly once
 export default Question;
