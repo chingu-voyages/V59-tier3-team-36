@@ -1,18 +1,16 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { FaHome, FaUser } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const dateString = useMemo(() => {
-    const today = new Date();
-    return today.toLocaleDateString(undefined, {
-      weekday: 'long',
-      month: 'long',
-      day: '2-digit',
-      year: 'numeric',
-    });
-  }, []);
+  const today = new Date();
+  const dateString = today.toLocaleDateString(undefined, {
+    weekday: 'long',
+    month: 'long',
+    day: '2-digit',
+    year: 'numeric',
+  });
 
   const linkStyle = ({ isActive }) =>
     `px-3 py-1 rounded-md transition-colors duration-200 font-semibold ${
