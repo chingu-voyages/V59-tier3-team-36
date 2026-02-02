@@ -25,7 +25,7 @@ export default function Navbar() {
         <div className="flex flex-col md:flex-row md:justify-between md:items-center h-auto md:h-16 py-2 md:py-0">
           <div>
             <div className="text-xl font-bold text-black ">AI Interview Question Generator</div>
-            <div className="text-xs text-black mt-1 md:mt-0 ">{dateString}</div>
+            <div className="text-xs text-black mt-1 md:mt-0">{dateString}</div>
           </div>
 
           {/* Desktop Menu */}
