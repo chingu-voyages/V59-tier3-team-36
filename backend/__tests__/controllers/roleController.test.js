@@ -1,13 +1,13 @@
 import { it, jest } from '@jest/globals';
 
 // Mock the Role model
-jest.unstable_mockModule('../services/RoleService.js', () => ({
+jest.unstable_mockModule('../../services/roleService.js', () => ({
     findRoles: jest.fn(),
 }));
 
 // Import the controller AFTER mocking
-const { getRoles } = await import('../controllers/RoleController.js');
-const { findRoles } = await import('../services/RoleService.js');
+const { getRoles } = await import('../../controllers/roleController.js');
+const { findRoles } = await import('../../services/roleService.js');
 
 describe('roles controller', () => {
     it('should return all roles with status 200 when successful', async () => {
