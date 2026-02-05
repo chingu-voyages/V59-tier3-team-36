@@ -4,6 +4,7 @@ import cors from "cors";
 import { connectDB } from "./config/database.js";
 import roleRoutes from "./routes/roleRoute.js";
 import questionRoutes from "./routes/questionRoutes.js";
+import sessionRoutes from "./routes/sessionRoute.js";
 
 // Creating express object
 const app = express();
@@ -22,7 +23,7 @@ app.use(express.json());
 // Route mount
 app.use("/api/roles", roleRoutes);
 app.use("/api/questions", questionRoutes);
-
+app.use('/api/sessions', sessionRoutes);
 // Default route
 app.get("/", (req, res) => {
   res.send("A simple Node App is " + "running on this server");
