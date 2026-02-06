@@ -16,8 +16,7 @@ export const fetchQuestionsByRole = async (role) => {
 
   //2. constructing url
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-  console.log("vite api base url:", VITE_API_BASE_URL);
-  console.log("base url:", BASE_URL);
+  console.log("api base url:", BASE_URL);
   const url = `${BASE_URL}/api/questions?role=${encodeURIComponent(role)}`;
   console.log("Fetching questions from URL:", url);
 
