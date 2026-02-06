@@ -1,45 +1,61 @@
-import { Trophy } from "lucide-react"
+import { Trophy, CheckCircle, XCircle, RotateCcw, Home } from "lucide-react";
+import Button from "../components/Button";
 
 export default function Results() {
   return (
-    <div>
-      <div>
-        <div className="bg-emerald-100 rounded-full">
+    <div className="bg-gray-50 flex items-center justify-center flex-col">
+      <div className="flex flex-col items-center justify-center">
+        <div className="bg-emerald-100 rounded-full p-3">
           <Trophy className="size-8 text-emerald-600" />
         </div>
-        <h2>Quiz Complete!</h2>
-          <p>Here's how you did on the UI/UX Designer questions</p>
+        <h2 className="font-bold text-3xl m-3 text-gray-900">Quiz Complete!</h2>
+        <p className="text-lg text-gray-600">
+          Here's how you did on the UI/UX Designer questions
+        </p>
       </div>
-      <div>
-        <div>
-          <div>40%</div>
-          <div>Keep practicing! 📚</div>
+      <div className="my-5 bg-white border border-gray-500 rounded-lg m-5 p-5 flex items-center flex-col w-full max-w-3/4">
+        <div className="text-center">
+          <div className="text-red-500 text-5xl font-bold mb-3">40%</div>
+          <div className="text-gray-600 text-xl">Keep practicing! 📚</div>
         </div>
-        <div>
-          <div>
-            <div>Correct Answers</div>
+        <div className="w-full flex flex-col md:flex-row mt-5 gap-5 justify-center">
+          <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+            <div className="flex gap-3">
+              <CheckCircle className="size-6 text-green-600" />
+              <p className="text-green-900 text-sm">Correct Answers</p>
+            </div>
             <div>
-              <div>2</div>
-              <div>40% of total</div>
+              <div className="text-green-900 font-bold text-3xl">2</div>
+              <div className="text-green-700 text-sm">40% of total</div>
             </div>
           </div>
-          <div>
-            <div>Incorrect Answers</div>
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+            <div className="flex gap-3">
+              <XCircle className="size-6 text-red-600" />
+              <p className="text-red-900 text-sm">Incorrect Answers</p>
+            </div>
             <div>
-              <div>3</div>
-              <div>60% of total</div>
+              <div className="text-red-900 font-bold text-3xl">3</div>
+              <div className="text-red-700 text-sm">60% of total</div>
             </div>
           </div>
         </div>
       </div>
-      <div>
-        <button>Try Again</button>
-        <button>Back to Home</button>
+      <div className="flex gap-5">
+        <button className="flex bg-white border-gray-300 border rounded-lg p-3">
+          <RotateCcw /> Try Again
+        </button>
+        <button className="flex bg-green-500 rounded-lg text-white p-3">
+          <Home /> Back to Home
+        </button>
       </div>
-      <div>
-        <p>Read to improve your score?</p>
-        <p>Practice makes perfect!  Try again or explore questions for other roles.</p>
+      <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-5 text-center mt-8">
+        <p className="text-emerald-900 mb-3 font-bold">Read to improve your score?</p>
+        <p className="text-emerald-800 text-sm">
+          Practice makes perfect! Try again or explore questions for other
+          roles.
+        </p>
       </div>
     </div>
-  )
+  );
 }
