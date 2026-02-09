@@ -34,12 +34,13 @@ Everyone on your team should add their name along with a link to their GitHub
 your repo access and to practice PR'ing with your team *before* you start
 coding!
 
-- Yangchen Dema(Scrum Master): [GitHub](https://github.com/ghaccountname) / [LinkedIn](https://linkedin.com/in/liaccountname)
+- Yangchen Dema(Scrum Master): [GitHub](https://github.com/dema66) / [LinkedIn](https://www.linkedin.com/in/yangchendema/)
 - Kevin Llanos (Software Engineer): [GitHub](https://github.com/KevinLlano) / [LinkedIn](https://linkedin.com/in/kevinllanos7)
 - Shruthi Reddy (Software Engineer) : [GitHub](https://github.com/shrusred) / [LinkedIn](https://www.linkedin.com/in/ssreddy/)
 - Banto Klara (Developer): [GitHub](https://github.com/bantoklara) / [LinkedIn](https://www.linkedin.com/in/banto-laczi-klara/)
 - Greg Minezzi: [GitHub](https://github.com/minezzig) / [LinkedIn](https://linkedin.com/in/gregminezzi)
 - Stanley Eze (Software Engineer) : [GitHub](https://github.com/Blackmile) / [LinkedIn](https://www.linkedin.com/in/stanleyeze01/)
+- Chinedu Olekah (Product Owner): [GitHub](https://github.com/kenako1) / [LinkedIn](https://www.linkedin.com/in/chinedu-olekah/)
 
    ...
 - Teammate name #n: [GitHub](https://github.com/ghaccountname) / [LinkedIn](https://linkedin.com/in/liaccountname)

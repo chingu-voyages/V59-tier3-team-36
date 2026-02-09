@@ -2,7 +2,7 @@ import { describe, it, jest } from '@jest/globals';
 
 // Mock the Role model
 jest.unstable_mockModule(
-    '../models/RoleModel.js',
+    '../../models/roleModel.js',
     () => ({
         default: {
             find: jest.fn(),
@@ -11,8 +11,8 @@ jest.unstable_mockModule(
 );
 
 // Import the service AFTER mocking
-const { default: Role } = await import("../models/RoleModel.js");
-const { findRoles } = await import('../services/RoleService.js');
+const { default: Role } = await import("../../models/roleModel.js");
+const { findRoles } = await import('../../services/roleService.js');
 
 describe('findRoles service', () => {
 
