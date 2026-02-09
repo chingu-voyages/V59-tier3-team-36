@@ -96,7 +96,7 @@ export default function Questions() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="w-full max-w-[640px] space-y-6">
       {/*Role title, question count*/}
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-bold text-gray-900">{role}</h2>
@@ -105,17 +105,18 @@ export default function Questions() {
           <span className="font-semibold">{total}</span>
         </p>
       </div>
-      {/*Progress bar*/}
 
+      {/*Progress bar*/}
       <Progress value={progressValue} className="w-full h-2" />
 
       {/*Flashcard*/}
       <div className="w-full">
         <Card className="w-full">
           <CardContent className="space-y-5">
-            <p className="text-lg font-semibold text-gray-900">
+            <p className="text-lg font-semibold text-gray-900 break-words">
               {questionText}
             </p>
+
             {/*Instructions*/}
             <p className="text-gray-600">
               Select the best answer from the options below
@@ -173,6 +174,7 @@ export default function Questions() {
             </div>
           </CardContent>
         </Card>
+
         {/*Action buttons*/}
         <div className="mt-4 flex w-full gap-3">
           <div className="flex-1">
