@@ -4,10 +4,12 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import Button from "../components/Button";
 import { fetchQuestionsByRole } from "../api/questions";
+import InfoIcon from "../components/icons/InfoIcon";
 
 // shadcn
 import { Card, CardContent } from "../components/ui/card";
 import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
+import { Progress } from "../components/ui/progress";
 
 export default function Questions() {
   const [searchParams] = useSearchParams();
@@ -78,7 +80,8 @@ export default function Questions() {
 
   const outOfAttempts = attemptsUsed >= MAX_ATTEMPTS;
   const canSubmit = !!selected && !outOfAttempts;
-  const canNext = attemptsUsed > 0 && index < total - 1;
+  const canNext = attemptsUsed === MAX_ATTEMPTS && index < total - 1;
+  const progressValue = (number / total) * 100;
 
   const onSubmit = () => {
     if (!canSubmit) return;
@@ -94,35 +97,42 @@ export default function Questions() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <h2 className="text-3xl font-bold text-gray-900">{role}</h2>
-          <p className="text-gray-600">Select the best answer.</p>
-        </div>
-        <p className="text-gray-600">
+      {/*Role title, question count*/}
+      <div className="flex items-center justify-between">
+        <h2 className="text-3xl font-bold text-gray-900">{role}</h2>
+        <p className="text-sm text-gray-600">
           Question <span className="font-semibold">{number}</span> of{" "}
           <span className="font-semibold">{total}</span>
         </p>
       </div>
+      {/*Progress bar*/}
 
-      {/* Flashcard */}
-      <Card>
-        <CardContent className="space-y-5">
-          <p className="text-lg font-semibold text-gray-900">{questionText}</p>
+      <Progress value={progressValue} className="w-full h-2" />
 
-          <RadioGroup
-            value={selected}
-            onValueChange={setSelected}
-            className="space-y-3"
-          >
-            {options.map(([key, text]) => {
-              const active = selected === key;
+      {/*Flashcard*/}
+      <div className="w-full">
+        <Card className="w-full">
+          <CardContent className="space-y-5">
+            <p className="text-lg font-semibold text-gray-900">
+              {questionText}
+            </p>
+            {/*Instructions*/}
+            <p className="text-gray-600">
+              Select the best answer from the options below
+            </p>
 
-              return (
-                <label
-                  key={key}
-                  className={`flex items-center gap-3 rounded-lg border p-4 transition
+            <RadioGroup
+              value={selected}
+              onValueChange={setSelected}
+              className="space-y-3"
+            >
+              {options.map(([key, text]) => {
+                const active = selected === key;
+
+                return (
+                  <label
+                    key={key}
+                    className={`flex items-center gap-3 rounded-lg border p-4 transition
                     ${
                       active
                         ? "bg-emerald-50 border-emerald-300"
@@ -133,62 +143,65 @@ export default function Questions() {
                         ? "opacity-60 cursor-not-allowed"
                         : "cursor-pointer hover:bg-emerald-50"
                     }`}
-                >
-                  <RadioGroupItem value={key} disabled={outOfAttempts} />
-                  <span className="text-gray-900">
-                    <strong>{key}.</strong> {text}
-                  </span>
-                </label>
-              );
-            })}
-          </RadioGroup>
+                  >
+                    <RadioGroupItem value={key} disabled={outOfAttempts} />
+                    <span className="text-gray-900">
+                      <strong>{key}.</strong> {text}
+                    </span>
+                  </label>
+                );
+              })}
+            </RadioGroup>
 
-          {/* Attempts / status */}
-          <div className="flex items-center justify-between gap-4">
-            {outOfAttempts ? (
-              <p className="text-sm font-semibold text-red-600">
-                Out of attempts
-              </p>
-            ) : (
-              <p className="text-sm text-gray-600">
-                Attempts used:{" "}
-                <span className="font-semibold text-gray-900">
-                  {attemptsUsed}
-                </span>{" "}
-                of {MAX_ATTEMPTS}
-              </p>
-            )}
+            {/*Attempts/status*/}
+            <div className="flex items-center gap-2">
+              <InfoIcon className="w-5 h-5 text-gray-500 shrink-0" />
 
-            <div className="flex items-center gap-3">
-              <Button
-                buttonText="Submit Answer"
-                onButtonClick={onSubmit}
-                disabled={!canSubmit}
-              />
-
-              {index < total - 1 ? (
-                <Button
-                  buttonText="Next Question"
-                  onButtonClick={onNext}
-                  disabled={!canNext}
-                />
+              {outOfAttempts ? (
+                <p className="text-sm font-semibold text-red-600">
+                  Out of attempts
+                </p>
               ) : (
-                <Button
-                  buttonText="Finish"
-                  onButtonClick={() =>
-                    console.log("[Questions] finish clicked")
-                  }
-                  disabled={attemptsUsed === 0}
-                />
+                <p className="text-sm text-gray-600">
+                  Attempts used:{" "}
+                  <span className="font-semibold text-gray-900">
+                    {attemptsUsed}
+                  </span>{" "}
+                  of {MAX_ATTEMPTS}
+                </p>
               )}
             </div>
+          </CardContent>
+        </Card>
+        {/*Action buttons*/}
+        <div className="mt-4 flex w-full gap-3">
+          <div className="flex-1">
+            <Button
+              buttonText="Submit Answer"
+              onButtonClick={onSubmit}
+              disabled={!canSubmit}
+              className="w-full"
+            />
           </div>
-        </CardContent>
-      </Card>
-
-      <Link className="text-[#079669] underline" to="/roles">
-        Back to Roles
-      </Link>
+          <div className="flex-1">
+            {index < total - 1 ? (
+              <Button
+                buttonText="Next Question"
+                onButtonClick={onNext}
+                disabled={!canNext}
+                className="w-full"
+              />
+            ) : (
+              <Button
+                buttonText="Finish"
+                onButtonClick={() => console.log("[Questions] finish clicked")}
+                disabled={attemptsUsed === 0}
+                className="w-full"
+              />
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
