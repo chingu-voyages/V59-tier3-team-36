@@ -96,7 +96,7 @@ export default function Questions() {
   };
 
   return (
-    <div className="w-full max-w-[640px] space-y-6">
+    <div className="space-y-6">
       {/*Role title, question count*/}
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-bold text-gray-900">{role}</h2>
@@ -110,7 +110,7 @@ export default function Questions() {
       <Progress value={progressValue} className="w-full h-2" />
 
       {/*Flashcard*/}
-      <div className="w-full">
+      <div className="w-full max-w-[640px]">
         <Card className="w-full">
           <CardContent className="space-y-5">
             <p className="text-lg font-semibold text-gray-900 break-words">
