@@ -27,7 +27,7 @@ const makeSession = ({ answers = [] } = {}) => ({
   answers,
   save: jest.fn().mockResolvedValue(true),
 });
-
+//test suite with 7 test cases
 describe("submitAnswerAttempt (sessionService)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
