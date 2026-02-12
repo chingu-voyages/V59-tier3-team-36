@@ -9,6 +9,12 @@ const results = {
   incorrectPercentage: 40,
 };
 
+const percentColor = () => {
+  if (results.correctPercentage >= 75) return "text-emerald-600";
+  if (results.correctPercentage >= 60) return "text-teal-600";
+  return "text-orange-600";
+};
+
 const message = () => {
   if (results.correctPercentage >= 90) return "Outstanding! 🌟";
   if (results.correctPercentage >= 75) return "Great job! 👏";
@@ -32,7 +38,7 @@ export default function Results() {
       </div>
       <div className="my-5 bg-white border border-gray-500 rounded-lg m-5 p-5 flex items-center flex-col w-full max-w-3/4">
         <div className="text-center">
-          <div className="text-red-500 text-5xl font-bold mb-3">
+          <div className={`text-5xl font-bold mb-3 ${percentColor()}`}>
             {results.correctPercentage}%
           </div>
           <div className="text-gray-600 text-xl">{message()}</div>
@@ -68,11 +74,17 @@ export default function Results() {
           </div>
         </div>
       </div>
-      <div className="flex gap-5">
-        <button className="cursor-pointer flex bg-white border-gray-300 border rounded-lg p-3" onClick={() => navigate("/roles")}>
+      <div className="flex gap-5 flex-col md:flex-row w-full">
+        <button
+          className="cursor-pointer flex justify-center bg-white border-gray-300 border rounded-lg p-3 gap-3"
+          onClick={() => navigate("/roles")}
+        >
           <RotateCcw /> Try Again
         </button>
-        <button className="cursor-pointer flex bg-green-500 rounded-lg text-white p-3" onClick={() => navigate("/")}>
+        <button
+          className="cursor-pointer flex justify-center bg-green-500 rounded-lg text-white p-3 gap-3"
+          onClick={() => navigate("/")}
+        >
           <Home /> Back to Home
         </button>
       </div>
