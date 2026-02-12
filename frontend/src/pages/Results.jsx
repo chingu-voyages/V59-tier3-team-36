@@ -1,7 +1,8 @@
 import { Trophy, CheckCircle, XCircle, RotateCcw, Home } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
-const results = {
+const dummyData = {
   totalQuestions: 5,
   correctCount: 3,
   incorrectCount: 2,
@@ -9,22 +10,39 @@ const results = {
   incorrectPercentage: 40,
 };
 
-const percentColor = () => {
-  if (results.correctPercentage >= 75) return "text-emerald-600";
-  if (results.correctPercentage >= 60) return "text-teal-600";
-  return "text-orange-600";
-};
-
-const message = () => {
-  if (results.correctPercentage >= 90) return "Outstanding! 🌟";
-  if (results.correctPercentage >= 75) return "Great job! 👏";
-  if (results.correctPercentage >= 60) return "Good effort! 💪";
-  return "Keep practicing! 📚";
-};
-
 export default function Results() {
   const navigate = useNavigate();
+  const [summary, setSummary] = useState({});
 
+  // fetch summary data from API
+  useEffect(() => {
+    const getSummary = async () => {
+      try {
+        const response = await fetch("");
+        const data = await response.json();
+        setSummary(data);
+      } catch (error) {
+        console.error("Couldn't fetch summary", error);
+      }
+    };
+    //getSummary();
+    setSummary(dummyData);
+  }, []);
+
+  // choose the main percent color based on data
+  const percentColor = () => {
+    if (summary.correctPercentage >= 75) return "text-emerald-600";
+    if (summary.correctPercentage >= 60) return "text-teal-600";
+    return "text-orange-600";
+  };
+
+  //choose the message to display based on data
+  const message = () => {
+    if (summary.correctPercentage >= 90) return "Outstanding! 🌟";
+    if (summary.correctPercentage >= 75) return "Great job! 👏";
+    if (summary.correctPercentage >= 60) return "Good effort! 💪";
+    return "Keep practicing! 📚";
+  };
   return (
     <div className="bg-gray-50 flex items-center justify-center flex-col">
       <div className="flex flex-col items-center justify-center">
@@ -39,7 +57,7 @@ export default function Results() {
       <div className="my-5 bg-white border border-gray-500 rounded-lg m-5 p-5 flex items-center flex-col w-full max-w-3/4">
         <div className="text-center">
           <div className={`text-5xl font-bold mb-3 ${percentColor()}`}>
-            {results.correctPercentage}%
+            {summary.correctPercentage}%
           </div>
           <div className="text-gray-600 text-xl">{message()}</div>
         </div>
@@ -51,10 +69,10 @@ export default function Results() {
             </div>
             <div>
               <div className="text-green-900 font-bold text-3xl">
-                {results.correctCount}
+                {summary.correctCount}
               </div>
               <div className="text-green-700 text-sm">
-                {results.correctPercentage}% of total
+                {summary.correctPercentage}% of total
               </div>
             </div>
           </div>
@@ -65,10 +83,10 @@ export default function Results() {
             </div>
             <div>
               <div className="text-red-900 font-bold text-3xl">
-                {results.incorrectCount}
+                {summary.incorrectCount}
               </div>
               <div className="text-red-700 text-sm">
-                {results.incorrectPercentage}% of total
+                {summary.incorrectPercentage}% of total
               </div>
             </div>
           </div>
