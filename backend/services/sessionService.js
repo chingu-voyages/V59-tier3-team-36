@@ -23,7 +23,7 @@ export const getSessionSummary = (session) => {
   };
 };
 
-/** Answering logic POST/api/sessions/:sessionId/answers */
+/** service function with answering logic POST/api/sessions/:sessionId/answers */
 export const submitAnswerAttempt = async ({
   sessionId,
   questionId,
@@ -77,4 +77,19 @@ export const submitAnswerAttempt = async ({
     entry.attemptsLeft = Math.max(0, entry.attemptsLeft - 1);
   }
   await session.save();
+  const attemptsRemaining = Math.max(0, entry.attemptsLeft);
+  const attemptsUsed = MAX_ATTEMPTS - attemptsRemaining;
+  let feedbackMessage;
+  if (isCorrect) feedbackMessage = "Correct";
+  else if (attemptsRemaining > 0) feedbackMessage = "Incorrect, try again";
+  else feedback = "Incorrect";
+  return {
+    questionId,
+    selectedOption,
+    isCorrect,
+    attemptsUsed,
+    attemptsRemaining,
+    feedbackMessage,
+    rationale: isCorrect || attemptsRemaining === 0 ? question.rationale : null,
+  };
 };
