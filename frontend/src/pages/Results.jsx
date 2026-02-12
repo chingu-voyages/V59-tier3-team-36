@@ -1,6 +1,7 @@
 import { Trophy, CheckCircle, XCircle, RotateCcw, Home } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { fetchSummary } from "../api/summary.js";
 
 const dummyData = {
   totalQuestions: 5,
@@ -13,13 +14,13 @@ const dummyData = {
 export default function Results() {
   const navigate = useNavigate();
   const [summary, setSummary] = useState({});
+  const [sessionId, setSessionId] = useState(0);
 
   // fetch summary data from API
   useEffect(() => {
     const getSummary = async () => {
       try {
-        const response = await fetch("");
-        const data = await response.json();
+        const data = await fetchSummary(sessionId);
         setSummary(data);
       } catch (error) {
         console.error("Couldn't fetch summary", error);
@@ -27,7 +28,7 @@ export default function Results() {
     };
     //getSummary();
     setSummary(dummyData);
-  }, []);
+  }, [sessionId]);
 
   // choose the main percent color based on data
   const percentColor = () => {
