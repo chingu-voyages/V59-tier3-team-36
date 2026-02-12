@@ -6,11 +6,10 @@ import roleRoutes from "./routes/roleRoute.js";
 import questionRoutes from "./routes/questionRoutes.js";
 import sessionRoutes from "./routes/sessionRoute.js";
 
-// Creating express object
-const app = express();
-
 // Load environment variables
 dotenv.config();
+// Creating express object
+const app = express();
 
 // Port Number
 const PORT = process.env.PORT || 5000;
@@ -23,7 +22,7 @@ app.use(express.json());
 // Route mount
 app.use("/api/roles", roleRoutes);
 app.use("/api/questions", questionRoutes);
-app.use('/api/sessions', sessionRoutes);
+app.use("/api/sessions", sessionRoutes);
 // Default route
 app.get("/", (req, res) => {
   res.send("A simple Node App is " + "running on this server");

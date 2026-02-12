@@ -1,6 +1,7 @@
 import Sessions from "../models/sessionModel.js";
 import Question from "../models/questionModel.js";
-
+//set
+const MAX_ATTEMPTS = 2;
 export const findSessionById = async (sessionId) => {
   const session = await Sessions.findById(sessionId);
   return session;
@@ -64,7 +65,7 @@ export const submitAnswerAttempt = async ({
       isCorrect: entry.isCorrect,
       attemptsUsed,
       attemptsRemaining,
-      feedbackMessage: entry.isCorrect ? "Correct" : "Incoorect",
+      feedbackMessage: entry.isCorrect ? "Correct" : "Incorrect",
       rationale:
         entry.isCorrect || attemptsRemaining === 0 ? question.rationale : null,
     };
@@ -82,7 +83,7 @@ export const submitAnswerAttempt = async ({
   let feedbackMessage;
   if (isCorrect) feedbackMessage = "Correct";
   else if (attemptsRemaining > 0) feedbackMessage = "Incorrect, try again";
-  else feedback = "Incorrect";
+  else feedbackMessage = "Incorrect";
   return {
     questionId,
     selectedOption,

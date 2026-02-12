@@ -28,7 +28,7 @@ export const getSummary = async (req, res) => {
 export const submitAnswer = async (req, res) => {
   const { sessionId } = req.params;
   const { questionId, selectedOption } = req.body;
-  //validate frontend request
+  //validate frontend request; bad request if questionId or selectedOption are missing
   if (!questionId || !selectedOption) {
     return res.status(400).json({
       message: "questionId and selectedOption are required",
@@ -48,6 +48,7 @@ export const submitAnswer = async (req, res) => {
     if (error.message === "QUESTION_NOT_FOUND") {
       return res.status(404).json({ message: "Question not found" });
     }
+    //bad request
     if (error.message === "INVALID_OPTION") {
       return res.status(400).json({ message: "Invalid selected option" });
     }
