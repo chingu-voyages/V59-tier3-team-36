@@ -1,28 +1,16 @@
-<<<<<<< HEAD
 import {
   findSessionById,
   getSessionSummary,
   submitAnswerAttempt,
+  insertSession,
 } from "../services/sessionService.js";
-=======
-import { findSessionById, getSessionSummary, insertSession } from "../services/sessionService.js";
 import CustomError from "../utils/CustomError.js";
->>>>>>> dev
 
 export const getSummary = async (req, res) => {
   const { id } = req.params;
 
-<<<<<<< HEAD
   try {
     const session = await findSessionById(id);
-=======
-    try {
-        const session = await findSessionById(id);
-
-        if (!session) {
-            return res.status(404).json({ message: `Session with id ${id} not found` });
-        }
->>>>>>> dev
 
     if (!session) {
       return res
@@ -30,12 +18,24 @@ export const getSummary = async (req, res) => {
         .json({ message: `Session with id ${id} not found` });
     }
 
-<<<<<<< HEAD
     const summary = getSessionSummary(session);
     res.status(200).json(summary);
   } catch (error) {
     console.log(`Error in getting session summary: ${error}`);
     res.status(500).json({ message: "Server Error" });
+  }
+};
+export const createSession = async (req, res, next) => {
+  try {
+    const role = req.body?.role;
+
+    if (!role) return next(new CustomError("Role is required", 400));
+
+    const createdSessionId = await insertSession(role);
+
+    res.status(201).json({ _id: createdSessionId });
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -71,20 +71,3 @@ export const submitAnswer = async (req, res) => {
     return res.status(500).json({ message: "Server Error" });
   }
 };
-=======
-}
-
-export const createSession = async (req, res, next) => {
-    try {
-        const role = req.body?.role;
-
-        if (!role) return next(new CustomError("Role is required", 400));
-        
-        const createdSessionId = await insertSession(role);
-
-        res.status(201).json({ _id: createdSessionId })
-    } catch (error) {
-        next(error);
-    }
-}
->>>>>>> dev
