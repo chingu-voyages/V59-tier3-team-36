@@ -83,7 +83,8 @@ export default function Questions() {
   const canSubmit = !!selected && !outOfAttempts;
   const canNext = attemptsUsed === MAX_ATTEMPTS && index < total - 1;
   const progressValue = (number / total) * 100;
-async () => {
+
+  const onSubmit = async () => {
     if (!canSubmit) return;
     
     try {
@@ -93,7 +94,6 @@ async () => {
       console.error('Failed to submit answer:', error);
       setAttemptsUsed((prev) => prev + 1);
     }
-    setAttemptsUsed((prev) => prev + 1);
   };
 
   const onNext = () => {
