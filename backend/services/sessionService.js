@@ -1,32 +1,33 @@
 import Sessions from "../models/sessionModel.js";
-<<<<<<< HEAD
 import Question from "../models/questionModel.js";
 //set
 const MAX_ATTEMPTS = 2;
-=======
 import CustomError from "../utils/CustomError.js";
 import { findRoleByName } from "./roleService.js";
 
->>>>>>> dev
 export const findSessionById = async (sessionId) => {
   const session = await Sessions.findById(sessionId);
   return session;
 };
 
 export const insertSession = async (role) => {
-    // Check if role exists
-    const roleFromDb = await findRoleByName(role);
+  // Check if role exists
+  const roleFromDb = await findRoleByName(role);
 
-    if (!roleFromDb) throw new CustomError(`Could not create a session: the role ${role} does not exist.`, 400);
+  if (!roleFromDb)
+    throw new CustomError(
+      `Could not create a session: the role ${role} does not exist.`,
+      400
+    );
 
-    // Create new session with initial fields
-    const createdSession = await Sessions.create({
-        role: roleFromDb.name,
-        answers: []
-    });
+  // Create new session with initial fields
+  const createdSession = await Sessions.create({
+    role: roleFromDb.name,
+    answers: [],
+  });
 
-    return createdSession._id;
-}
+  return createdSession._id;
+};
 
 export const getSessionSummary = (session) => {
   const answers = session.answers ?? [];
