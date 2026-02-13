@@ -63,7 +63,7 @@ export default function Summary({ role, sessionId }) {
         </div>
         <h2 className="font-bold text-3xl m-3 text-gray-900">Quiz Complete!</h2>
         <p className="text-lg text-gray-600">
-          Here's how you did on the {role} questions
+          Here's how you did on the {role ?? "selected"} questions
         </p>
       </div>
       <div className="my-5 bg-white border border-gray-300 rounded-lg m-5 p-5 flex items-center flex-col">
