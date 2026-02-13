@@ -1,9 +1,10 @@
 import { Router } from "express";
-<<<<<<< HEAD
-import { getSummary, submitAnswer } from "../controllers/sessionController.js";
-=======
-import { createSession, getSummary } from "../controllers/sessionController.js";
->>>>>>> dev
+import {
+  getSummary,
+  submitAnswer,
+  createSession,
+} from "../controllers/sessionController.js";
+
 import { validateObjectId } from "../middleware/validateObjectId.js";
 
 const router = Router();
