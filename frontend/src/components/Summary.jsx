@@ -14,7 +14,7 @@ const dummyData = {
 // THIS COMPONENT REQUIRES "role", "sessionId"
 export default function Summary({ role, sessionId }) {
   const navigate = useNavigate();
-  const [summary, setSummary] = useState({});
+  const [summary, setSummary] = useState(dummyData);
 
   // fetch summary data from API
   useEffect(() => {
