@@ -4,21 +4,27 @@ import { useEffect, useState } from "react";
 import { fetchSummary } from "../api/summary";
 
 const dummyData = {
-  totalQuestions: 5,
-  correctCount: 3,
-  incorrectCount: 2,
-  correctPercentage: 60,
-  incorrectPercentage: 40,
+  totalQuestions: 0,
+  correctCount: 0,
+  incorrectCount: 0,
+  correctPercentage: 0,
+  incorrectPercentage: 0,
 };
 
-export default function Summary() {
+// THIS COMPONENT REQUIRES "role", "sessionId"
+export default function Summary({ role, sessionId }) {
   const navigate = useNavigate();
   const [summary, setSummary] = useState({});
-  const [sessionId, setSessionId] = useState(0);
 
   // fetch summary data from API
   useEffect(() => {
     const getSummary = async () => {
+      // IF COMPONENT DOESN'T RECEIVE sessionId, POPULATE WITH dummyData
+      if (!sessionId) {
+        setSummary(dummyData);
+        return;
+      }
+
       try {
         const data = await fetchSummary(sessionId);
         setSummary(data);
@@ -26,8 +32,7 @@ export default function Summary() {
         console.error("Couldn't fetch summary", error);
       }
     };
-    //getSummary();
-    setSummary(dummyData);
+    getSummary();
   }, [sessionId]);
 
   // choose the main percent color based on data
@@ -44,6 +49,12 @@ export default function Summary() {
     if (summary.correctPercentage >= 60) return "Good effort! 💪";
     return "Keep practicing! 📚";
   };
+
+  // return to start of questions
+  const tryAgain = () => {
+    navigate(`/questions?role=${encodeURIComponent(role)}`);
+  };
+
   return (
     <div className="w-full">
       <div className="flex flex-col items-center justify-center">
@@ -52,7 +63,7 @@ export default function Summary() {
         </div>
         <h2 className="font-bold text-3xl m-3 text-gray-900">Quiz Complete!</h2>
         <p className="text-lg text-gray-600">
-          Here's how you did on the UI/UX Designer questions
+          Here's how you did on the {role} questions
         </p>
       </div>
       <div className="my-5 bg-white border border-gray-300 rounded-lg m-5 p-5 flex items-center flex-col">
@@ -96,7 +107,7 @@ export default function Summary() {
       <div className="flex gap-5 flex-col md:flex-row items-center justify-center">
         <button
           className="cursor-pointer flex justify-center bg-white border-gray-300 border rounded-lg p-3 gap-3 md:flex-1"
-          onClick={() => navigate("/roles")}
+          onClick={tryAgain}
         >
           <RotateCcw /> Try Again
         </button>
