@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 import Summary from "../components/Summary";
 
@@ -10,7 +10,7 @@ vi.mock("react-router-dom", () => ({
 }));
 
 // Mock fetchSummary API
-vi.mock("../../api/summary", () => ({
+vi.mock("../api/summary", () => ({
   fetchSummary: vi.fn(() =>
     Promise.resolve({
       totalQuestions: 5,
@@ -22,29 +22,33 @@ vi.mock("../../api/summary", () => ({
   ),
 }));
 
+// Mock createSession API
+vi.mock("../api/roles", () => ({
+  createSession: vi.fn(() => Promise.resolve({ _id: "new-session-123" })),
+}));
+
 describe("Summary component", () => {
   it("renders summary with role and session data", async () => {
     render(<Summary role="Scrum Master" sessionId="test-session-123" />);
 
-    // Check if title is displayed
     expect(screen.getByText("Quiz Complete!")).toBeInTheDocument();
 
-    // Check if role is mentioned
     expect(
       screen.getByText(/Here's how you did on the Scrum Master questions/i)
     ).toBeInTheDocument();
   });
 
-  it("navigates to questions with restart parameter when Try Again is clicked", () => {
+  it("navigates to questions with new session when Try Again is clicked", async () => {
     render(<Summary role="Web Developer" sessionId="test-session-456" />);
 
     const tryAgainButton = screen.getByRole('button', { name: /Try Again/i });
     fireEvent.click(tryAgainButton);
 
-    // Check that navigate was called with correct URL
-    expect(mockNavigate).toHaveBeenCalledWith(
-      "/questions?role=Web%20Developer&restart=true"
-    );
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith(
+        "/questions?role=Web%20Developer&sessionId=new-session-123&restart=true"
+      );
+    });
   });
 
   it("navigates to home when Back to Home is clicked", () => {
@@ -53,7 +57,6 @@ describe("Summary component", () => {
     const homeButton = screen.getByText(/Back to Home/i);
     fireEvent.click(homeButton);
 
-    // Check that navigate was called with home route
     expect(mockNavigate).toHaveBeenCalledWith("/");
   });
 });
