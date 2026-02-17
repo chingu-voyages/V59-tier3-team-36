@@ -10,6 +10,7 @@ import InfoIcon from "../components/icons/InfoIcon";
 import { Card, CardContent } from "../components/ui/card";
 import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
 import { Progress } from "../components/ui/progress";
+import Summary from "../components/Summary";
 
 export default function Questions() {
   const [searchParams] = useSearchParams();

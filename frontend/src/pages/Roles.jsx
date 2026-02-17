@@ -35,8 +35,7 @@ const handleStartPractice = async (roleName) => {
     }
   };
 
-  
-  return (
+  return ( 
     <div>
 
       {/* Title */}
