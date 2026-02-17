@@ -18,12 +18,28 @@ export default function Questions() {
   const sessionId = searchParams.get("sessionId") || "";
   const restart = searchParams.get("restart");
 
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(() => {
+    const saved = sessionStorage.getItem("quizIndex");
+    return saved ? parseInt(saved, 10) : 0;
+  });
   const [selected, setSelected] = useState("");
   const [attemptsUsed, setAttemptsUsed] = useState(0);
   const [showSummary, setShowSummary] = useState(false);
+  const [feedback, setFeedback] = useState(null); // { isCorrect, feedbackMessage, rationale }
 
   const MAX_ATTEMPTS = 2;
+
+  // Persist index to sessionStorage
+  useEffect(() => {
+    sessionStorage.setItem("quizIndex", index);
+  }, [index]);
+
+  // Persist sessionId to sessionStorage
+  useEffect(() => {
+    if (sessionId) {
+      sessionStorage.setItem("quizSessionId", sessionId);
+    }
+  }, [sessionId]);
 
   useEffect(() => {
     console.log("[Questions] role param:", role);
@@ -36,6 +52,9 @@ export default function Questions() {
       setIndex(0);
       setSelected("");
       setAttemptsUsed(0);
+      setFeedback(null);
+      sessionStorage.removeItem("quizIndex");
+      sessionStorage.removeItem("quizSessionId");
     }
   }, [restart]);
 
@@ -93,19 +112,26 @@ export default function Questions() {
   const total = questions.length;
 
   const outOfAttempts = attemptsUsed >= MAX_ATTEMPTS;
-  const canSubmit = !!selected && !outOfAttempts;
-  const canNext = attemptsUsed === MAX_ATTEMPTS && index < total - 1;
+  const answeredCorrectly = feedback?.isCorrect === true;
+  const canSubmit = !!selected && !outOfAttempts && !answeredCorrectly;
+  const canNext = (outOfAttempts || answeredCorrectly) && index < total - 1;
   const progressValue = (number / total) * 100;
 
   const onSubmit = async () => {
     if (!canSubmit) return;
     
     try {
-      await submitAnswer(sessionId, current._id, selected);
-      setAttemptsUsed((prev) => prev + 1);
+      const result = await submitAnswer(sessionId, current._id, selected);
+      setAttemptsUsed(result.attemptsUsed);
+      setFeedback({
+        isCorrect: result.isCorrect,
+        feedbackMessage: result.feedbackMessage,
+        rationale: result.rationale,
+      });
     } catch (error) {
       console.error('Failed to submit answer:', error);
       setAttemptsUsed((prev) => prev + 1);
+      setFeedback(null);
     }
   };
 
@@ -114,6 +140,7 @@ export default function Questions() {
     setIndex((prev) => prev + 1);
     setSelected("");
     setAttemptsUsed(0);
+    setFeedback(null);
   };
 
   const onFinish = () => {
@@ -203,6 +230,30 @@ export default function Questions() {
                 </p>
               )}
             </div>
+
+            {/*Feedback and rationale*/}
+            {feedback && (
+              <div
+                className={`rounded-lg p-4 ${
+                  feedback.isCorrect
+                    ? "bg-green-50 border border-green-200"
+                    : "bg-red-50 border border-red-200"
+                }`}
+              >
+                <p
+                  className={`font-semibold ${
+                    feedback.isCorrect ? "text-green-700" : "text-red-700"
+                  }`}
+                >
+                  {feedback.feedbackMessage}
+                </p>
+                {feedback.rationale && (
+                  <p className="text-gray-700 text-sm mt-2">
+                    <strong>Rationale:</strong> {feedback.rationale}
+                  </p>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -228,7 +279,7 @@ export default function Questions() {
               <Button
                 buttonText="Finish"
                 onButtonClick={onFinish}
-                disabled={attemptsUsed === 0}
+                disabled={!outOfAttempts && !answeredCorrectly}
                 className="w-full"
               />
             )}
