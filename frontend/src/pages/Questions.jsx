@@ -16,16 +16,28 @@ export default function Questions() {
   const [searchParams] = useSearchParams();
   const role = searchParams.get("role") || "";
   const sessionId = searchParams.get("sessionId") || "";
+  const restart = searchParams.get("restart");
 
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState("");
   const [attemptsUsed, setAttemptsUsed] = useState(0);
+  const [showSummary, setShowSummary] = useState(false);
 
   const MAX_ATTEMPTS = 2;
 
   useEffect(() => {
     console.log("[Questions] role param:", role);
   }, [role]);
+
+  // "try again" button useEffect functionality 
+  useEffect(() => {
+    if (restart) {
+      setShowSummary(false);
+      setIndex(0);
+      setSelected("");
+      setAttemptsUsed(0);
+    }
+  }, [restart]);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["questions", role],
@@ -103,6 +115,16 @@ export default function Questions() {
     setSelected("");
     setAttemptsUsed(0);
   };
+
+  const onFinish = () => {
+    console.log("[Questions] finish clicked");
+    setShowSummary(true);
+  };
+
+  // show summary component when quiz is finished
+  if (showSummary) {
+    return <Summary role={role} sessionId={sessionId} />;
+  }
 
   return (
     <div className="space-y-6">
@@ -205,7 +227,7 @@ export default function Questions() {
             ) : (
               <Button
                 buttonText="Finish"
-                onButtonClick={() => console.log("[Questions] finish clicked")}
+                onButtonClick={onFinish}
                 disabled={attemptsUsed === 0}
                 className="w-full"
               />

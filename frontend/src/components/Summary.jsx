@@ -52,7 +52,7 @@ export default function Summary({ role, sessionId }) {
 
   // return to start of questions
   const tryAgain = () => {
-    navigate(`/questions?role=${encodeURIComponent(role)}`);
+    navigate(`/questions?role=${encodeURIComponent(role)}&restart=true`);
   };
 
   return (
