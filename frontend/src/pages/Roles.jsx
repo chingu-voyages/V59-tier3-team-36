@@ -29,6 +29,9 @@ const Roles = () => {
 const handleStartPractice = async (roleName) => {
     try {
       const session = await createSession(roleName);
+      // Clear stale session data before starting fresh
+      sessionStorage.removeItem("quizIndex");
+      sessionStorage.removeItem("quizSessionId");
       navigate(`/questions?role=${encodeURIComponent(roleName)}&sessionId=${session._id}`);
     } catch (error) {
       console.error('Failed to create session:', error);

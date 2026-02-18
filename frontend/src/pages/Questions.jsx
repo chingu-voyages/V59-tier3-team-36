@@ -1,5 +1,5 @@
 // src/pages/Questions.jsx
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import Button from "../components/Button";
@@ -13,28 +13,33 @@ import { Progress } from "../components/ui/progress";
 import Summary from "../components/Summary";
 
 export default function Questions() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const role = searchParams.get("role") || "";
-  const sessionId = searchParams.get("sessionId") || "";
-  const restart = searchParams.get("restart");
+  const sessionId = searchParams.get("sessionId") || sessionStorage.getItem("quizSessionId") || "";
 
   const [index, setIndex] = useState(() => {
-    const saved = sessionStorage.getItem("quizIndex");
-    return saved ? parseInt(saved, 10) : 0;
+    const savedSession = sessionStorage.getItem("quizSessionId");
+    const savedIndex = sessionStorage.getItem("quizIndex");
+    if (savedSession && savedSession === sessionId && savedIndex) {
+      return parseInt(savedIndex, 10);
+    }
+    return 0;
   });
   const [selected, setSelected] = useState("");
   const [attemptsUsed, setAttemptsUsed] = useState(0);
   const [showSummary, setShowSummary] = useState(false);
-  const [feedback, setFeedback] = useState(null); // { isCorrect, feedbackMessage, rationale }
+  const [feedback, setFeedback] = useState(null);
 
   const MAX_ATTEMPTS = 2;
 
-  // Persist index to sessionStorage
+  // ref to track previous sessionId for refresh logic
+  const prevSessionId = useRef(sessionId);
+
+  // Persistent index and sessionId for sessionStorage
   useEffect(() => {
     sessionStorage.setItem("quizIndex", index);
   }, [index]);
 
-  // Persist sessionId to sessionStorage
   useEffect(() => {
     if (sessionId) {
       sessionStorage.setItem("quizSessionId", sessionId);
@@ -45,31 +50,29 @@ export default function Questions() {
     console.log("[Questions] role param:", role);
   }, [role]);
 
-  // "try again" button useEffect functionality 
+  // Reset quiz state only when sessionId actually changes (not on refresh)
   useEffect(() => {
-    if (restart) {
-      setShowSummary(false);
+    if (prevSessionId.current !== sessionId) {
       setIndex(0);
       setSelected("");
       setAttemptsUsed(0);
       setFeedback(null);
-      sessionStorage.removeItem("quizIndex");
-      sessionStorage.removeItem("quizSessionId");
+      setShowSummary(false);
+      sessionStorage.setItem("quizIndex", "0");
+      prevSessionId.current = sessionId;
+      // Removes restart param after resetting state when clicking "Try Again" to prevent unintended resets on refresh
+      if (searchParams.get("restart")) {
+        searchParams.delete("restart");
+        setSearchParams(searchParams, { replace: true });
+      }
     }
-  }, [restart]);
+  }, [sessionId]);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["questions", role],
     queryFn: () => fetchQuestionsByRole(role),
     enabled: !!role,
   });
-
-  useEffect(() => {
-    if (!role) return;
-    setIndex(0);
-    setSelected("");
-    setAttemptsUsed(0);
-  }, [role]);
 
   if (isLoading) return <p className="text-gray-600">Loading questions...</p>;
 
