@@ -2,6 +2,7 @@ import { Trophy, CheckCircle, XCircle, RotateCcw, Home } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { fetchSummary } from "../api/summary";
+import { createSession } from "../api/roles";
 
 const dummyData = {
   totalQuestions: 0,
@@ -50,9 +51,14 @@ export default function Summary({ role, sessionId }) {
     return "Keep practicing! 📚";
   };
 
-  // return to start of questions
-  const tryAgain = () => {
-    navigate(`/questions?role=${encodeURIComponent(role)}`);
+  // return to start of questions with a new session
+  const tryAgain = async () => {
+    try {
+      const newSession = await createSession(role);
+      navigate(`/questions?role=${encodeURIComponent(role)}&sessionId=${newSession._id}&restart=true`);
+    } catch (error) {
+      console.error("Failed to create new session:", error);
+    }
   };
 
   return (

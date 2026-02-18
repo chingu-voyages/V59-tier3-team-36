@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { Palette, Shield, Code, Briefcase } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Card from '../components/Card';
-import { fetchRoles } from '../api/roles';
+import { fetchRoles, createSession } from '../api/roles';
 
 const Roles = () => {
+  const navigate = useNavigate();
 
   const howItWOrksSteps = [
     "Choose a role to begin your practice session",
@@ -25,6 +26,17 @@ const Roles = () => {
     queryKey: ["roles"],
     queryFn: fetchRoles
   })
+const handleStartPractice = async (roleName) => {
+    try {
+      const session = await createSession(roleName);
+      // Clear stale session data before starting fresh
+      sessionStorage.removeItem("quizIndex");
+      sessionStorage.removeItem("quizSessionId");
+      navigate(`/questions?role=${encodeURIComponent(roleName)}&sessionId=${session._id}`);
+    } catch (error) {
+      console.error('Failed to create session:', error);
+    }
+  };
 
   return ( 
     <div>
@@ -51,7 +63,7 @@ const Roles = () => {
                     <div className={"size-12 rounded-lg flex items-center justify-center bg-[#D1FAE5]"}> {Icon} </div>}
                   title={role.name}
                   description={`${role.questionCount} question${role.questionCount > 1 ? "s" : ""} available`}
-                  action={<Link className="block bg-[#079669] text-white text-center w-full py-2 px-4 rounded hover:bg-green-700 transition duration-300 font-semibold" to={`/questions?role=${encodeURIComponent(role.name)}`} >Start practice </Link>} />
+                  action={<button className="block bg-[#079669] text-white text-center w-full py-2 px-4 rounded hover:bg-green-700 transition duration-300 font-semibold" onClick={() => handleStartPractice(role.name)} >Start practice </button>} />
               )
             })}
           </div>
