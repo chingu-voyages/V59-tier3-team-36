@@ -61,7 +61,7 @@ function Home() {
           </li>
           <li className="flex items-start gap-2">
             <CheckCircle className="size-5 text-emerald-600 flex-shrink-0 mt-0.5" />
-            <span>Performance trackinng and statistics</span>
+            <span>Performance tracking and statistics</span>
           </li>
           <li className="flex items-start gap-2">
             <CheckCircle className="size-5 text-emerald-600 flex-shrink-0 mt-0.5" />
