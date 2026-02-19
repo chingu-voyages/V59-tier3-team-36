@@ -49,15 +49,19 @@ you like the best.
    
 3) Kevin,Greg, Shruthi and Yangchen- collobrate to create Initial Product backlog
    
-5) Daily standup(live)-Monday-Thursday-1pm ESt??
+5) Daily standup(live)-Monday-Thursday-1pm EST
+
+6) Sprint Review/Retrospective/Planning-Every Friday 1 PM
    
 7) Chingu Project- Interview Questions Generator App
    
-9) Tackstack:
+9) Tech stack:
     
         -frontend-React Javascript, Css, Tailwind
    
-        -backend-Express Node, React, Google Gemini LLM
+        -backend-For the backend we used Express web framework with Node.js runtime environment,Javascript, MongoDB 
+
+
    
 11) Task Tracking Tools- jira
     
