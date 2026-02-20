@@ -1,42 +1,78 @@
 // src/pages/Questions.jsx
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import Button from "../components/Button";
-import { fetchQuestionsByRole } from "../api/questions";
+import { fetchQuestionsByRole, submitAnswer } from "../api/questions";
 import InfoIcon from "../components/icons/InfoIcon";
 
 // shadcn
 import { Card, CardContent } from "../components/ui/card";
 import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
 import { Progress } from "../components/ui/progress";
+import Summary from "../components/Summary";
 
 export default function Questions() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const role = searchParams.get("role") || "";
+  const sessionId = searchParams.get("sessionId") || sessionStorage.getItem("quizSessionId") || "";
 
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(() => {
+    const savedSession = sessionStorage.getItem("quizSessionId");
+    const savedIndex = sessionStorage.getItem("quizIndex");
+    if (savedSession && savedSession === sessionId && savedIndex) {
+      return parseInt(savedIndex, 10);
+    }
+    return 0;
+  });
   const [selected, setSelected] = useState("");
   const [attemptsUsed, setAttemptsUsed] = useState(0);
+  const [showSummary, setShowSummary] = useState(false);
+  const [feedback, setFeedback] = useState(null);
 
   const MAX_ATTEMPTS = 2;
+
+  // ref to track previous sessionId for refresh logic
+  const prevSessionId = useRef(sessionId);
+
+  // Persistent index and sessionId for sessionStorage
+  useEffect(() => {
+    sessionStorage.setItem("quizIndex", index);
+  }, [index]);
+
+  useEffect(() => {
+    if (sessionId) {
+      sessionStorage.setItem("quizSessionId", sessionId);
+    }
+  }, [sessionId]);
 
   useEffect(() => {
     console.log("[Questions] role param:", role);
   }, [role]);
+
+  // Reset quiz state only when sessionId actually changes (not on refresh)
+  useEffect(() => {
+    if (prevSessionId.current !== sessionId) {
+      setIndex(0);
+      setSelected("");
+      setAttemptsUsed(0);
+      setFeedback(null);
+      setShowSummary(false);
+      sessionStorage.setItem("quizIndex", "0");
+      prevSessionId.current = sessionId;
+      // Removes restart param after resetting state when clicking "Try Again" to prevent unintended resets on refresh
+      if (searchParams.get("restart")) {
+        searchParams.delete("restart");
+        setSearchParams(searchParams, { replace: true });
+      }
+    }
+  }, [sessionId]);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["questions", role],
     queryFn: () => fetchQuestionsByRole(role),
     enabled: !!role,
   });
-
-  useEffect(() => {
-    if (!role) return;
-    setIndex(0);
-    setSelected("");
-    setAttemptsUsed(0);
-  }, [role]);
 
   if (isLoading) return <p className="text-gray-600">Loading questions...</p>;
 
@@ -79,13 +115,27 @@ export default function Questions() {
   const total = questions.length;
 
   const outOfAttempts = attemptsUsed >= MAX_ATTEMPTS;
-  const canSubmit = !!selected && !outOfAttempts;
-  const canNext = attemptsUsed === MAX_ATTEMPTS && index < total - 1;
+  const answeredCorrectly = feedback?.isCorrect === true;
+  const canSubmit = !!selected && !outOfAttempts && !answeredCorrectly;
+  const canNext = (outOfAttempts || answeredCorrectly) && index < total - 1;
   const progressValue = (number / total) * 100;
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     if (!canSubmit) return;
-    setAttemptsUsed((prev) => prev + 1);
+    
+    try {
+      const result = await submitAnswer(sessionId, current._id, selected);
+      setAttemptsUsed(result.attemptsUsed);
+      setFeedback({
+        isCorrect: result.isCorrect,
+        feedbackMessage: result.feedbackMessage,
+        rationale: result.rationale,
+      });
+    } catch (error) {
+      console.error('Failed to submit answer:', error);
+      setAttemptsUsed((prev) => prev + 1);
+      setFeedback(null);
+    }
   };
 
   const onNext = () => {
@@ -93,7 +143,18 @@ export default function Questions() {
     setIndex((prev) => prev + 1);
     setSelected("");
     setAttemptsUsed(0);
+    setFeedback(null);
   };
+
+  const onFinish = () => {
+    console.log("[Questions] finish clicked");
+    setShowSummary(true);
+  };
+
+  // show summary component when quiz is finished
+  if (showSummary) {
+    return <Summary role={role} sessionId={sessionId} />;
+  }
 
   return (
     <div className="space-y-6">
@@ -172,6 +233,30 @@ export default function Questions() {
                 </p>
               )}
             </div>
+
+            {/*Feedback and rationale*/}
+            {feedback && (
+              <div
+                className={`rounded-lg p-4 ${
+                  feedback.isCorrect
+                    ? "bg-green-50 border border-green-200"
+                    : "bg-red-50 border border-red-200"
+                }`}
+              >
+                <p
+                  className={`font-semibold ${
+                    feedback.isCorrect ? "text-green-700" : "text-red-700"
+                  }`}
+                >
+                  {feedback.feedbackMessage}
+                </p>
+                {feedback.rationale && (
+                  <p className="text-gray-700 text-sm mt-2">
+                    <strong>Rationale:</strong> {feedback.rationale}
+                  </p>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -196,8 +281,8 @@ export default function Questions() {
             ) : (
               <Button
                 buttonText="Finish"
-                onButtonClick={() => console.log("[Questions] finish clicked")}
-                disabled={attemptsUsed === 0}
+                onButtonClick={onFinish}
+                disabled={!outOfAttempts && !answeredCorrectly}
                 className="w-full"
               />
             )}

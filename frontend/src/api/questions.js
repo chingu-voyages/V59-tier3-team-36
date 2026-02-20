@@ -40,3 +40,20 @@ export const fetchQuestionsByRole = async (role) => {
   //7. return data
   return data;
 };
+
+export const submitAnswer = async (sessionId, questionId, selectedOption) => {
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const response = await fetch(`${BASE_URL}/api/sessions/${sessionId}/answers`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ questionId, selectedOption }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to submit answer');
+  }
+
+  return response.json();
+};

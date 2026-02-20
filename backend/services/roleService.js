@@ -9,3 +9,7 @@ export const findRoles = async () => {
         throw error;
     }
 }
+
+export const findRoleByName = async (roleName) => {
+    return await Role.findOne({name: roleName});
+}
