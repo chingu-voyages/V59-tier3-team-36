@@ -35,7 +35,7 @@ function Home() {
         <Card
           icon={<CheckCircle className="text-green-600" size={32} />}
           title="Instant feedback"
-          description="Get immediate feedback on your answers with up to 3 attempts per question"
+          description="Get immediate feedback on your answers with up to 2 attempts per question"
         />
         <Card
           icon={<CheckCircle className="text-green-600" size={32} />}
