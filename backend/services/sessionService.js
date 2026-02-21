@@ -96,9 +96,8 @@ export const submitAnswerAttempt = async ({
   const isCorrect = selectedOption === question.answer;
   entry.selectedOption = selectedOption;
   entry.isCorrect = isCorrect;
-  if (!isCorrect) {
-    entry.attemptsLeft = Math.max(0, entry.attemptsLeft - 1);
-  }
+  entry.attemptsLeft = Math.max(0, entry.attemptsLeft - 1);
+
   await session.save();
   const attemptsRemaining = Math.max(0, entry.attemptsLeft);
   const attemptsUsed = MAX_ATTEMPTS - attemptsRemaining;
