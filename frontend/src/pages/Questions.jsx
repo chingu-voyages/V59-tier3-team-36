@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { CheckCircle, CircleX } from "lucide-react";
 import Button from "../components/Button";
 import { fetchQuestionsByRole, submitAnswer } from "../api/questions";
 import InfoIcon from "../components/icons/InfoIcon";
@@ -122,15 +123,11 @@ export default function Questions() {
 
   const onSubmit = async () => {
     if (!canSubmit) return;
-    
+
     try {
       const result = await submitAnswer(sessionId, current._id, selected);
       setAttemptsUsed(result.attemptsUsed);
-      setFeedback({
-        isCorrect: result.isCorrect,
-        feedbackMessage: result.feedbackMessage,
-        rationale: result.rationale,
-      });
+      setFeedback(result);
     } catch (error) {
       console.error('Failed to submit answer:', error);
       setAttemptsUsed((prev) => prev + 1);
@@ -195,16 +192,14 @@ export default function Questions() {
                   <label
                     key={key}
                     className={`flex items-center gap-3 rounded-lg border p-4 transition
-                    ${
-                      active
+                    ${active
                         ? "bg-emerald-50 border-emerald-300"
                         : "bg-white border-gray-200"
-                    }
-                    ${
-                      outOfAttempts
+                      }
+                    ${outOfAttempts
                         ? "opacity-60 cursor-not-allowed"
                         : "cursor-pointer hover:bg-emerald-50"
-                    }`}
+                      }`}
                   >
                     <RadioGroupItem value={key} disabled={outOfAttempts} />
                     <span className="text-gray-900">
@@ -214,16 +209,21 @@ export default function Questions() {
                 );
               })}
             </RadioGroup>
+            {feedback && !feedback.isCorrect && !outOfAttempts &&
+              <div
+                className="flex items-start gap-3  rounded-lg p-4 bg-red-50 border border-red-200">
+                <CircleX className="shrink-0 mt-1 text-red-600" />
+                <div className="flex-1">
+                  <p className="text-red-700 font-semibold">{feedback.feedbackMessage}</p>
+                  <p className="text-sm text-red-800 mb-3">You have {feedback.attemptsRemaining} attempt{feedback.attemptsRemaining !== 1 ? "s" : ""} remaining.</p>
+                </div>
 
+              </div>
+            }
             {/*Attempts/status*/}
-            <div className="flex items-center gap-2">
-              <InfoIcon className="w-5 h-5 text-gray-500 shrink-0" />
-
-              {outOfAttempts ? (
-                <p className="text-sm font-semibold text-red-600">
-                  Out of attempts
-                </p>
-              ) : (
+            {(!feedback || (!feedback.isCorrect && !outOfAttempts)) &&
+              <div className="flex items-center gap-2">
+                <InfoIcon className="w-5 h-5 text-gray-500 shrink-0" />
                 <p className="text-sm text-gray-600">
                   Attempts used:{" "}
                   <span className="font-semibold text-gray-900">
@@ -231,30 +231,40 @@ export default function Questions() {
                   </span>{" "}
                   of {MAX_ATTEMPTS}
                 </p>
-              )}
-            </div>
 
+              </div>
+            }
             {/*Feedback and rationale*/}
-            {feedback && (
+            {feedback && (feedback.isCorrect || outOfAttempts) && (
               <div
-                className={`rounded-lg p-4 ${
-                  feedback.isCorrect
-                    ? "bg-green-50 border border-green-200"
-                    : "bg-red-50 border border-red-200"
-                }`}
-              >
-                <p
-                  className={`font-semibold ${
-                    feedback.isCorrect ? "text-green-700" : "text-red-700"
+                className={`flex items-start gap-3 rounded-lg p-4 ${feedback.isCorrect
+                  ? "bg-green-50 border border-green-200"
+                  : "bg-red-50 border border-red-200"
                   }`}
-                >
-                  {feedback.feedbackMessage}
-                </p>
-                {feedback.rationale && (
-                  <p className="text-gray-700 text-sm mt-2">
-                    <strong>Rationale:</strong> {feedback.rationale}
+              >
+                {feedback.isCorrect ?
+                  <CheckCircle className="shrink-0 mt-1 text-green-600" />
+                  : <CircleX className="shrink-0 mt-1 text-red-600" />
+                }
+                <div className="flex-1">
+                  <p
+                    className={`font-semibold ${feedback.isCorrect ? "text-green-900" : "text-red-700"
+                      }`}
+                  >
+                    {feedback.feedbackMessage}
                   </p>
-                )}
+                  {feedback.isCorrect ?
+                    <p className="text-sm text-green-800 mb-3">Great job! You got it right {attemptsUsed === 1 ? "on your first try." : `in ${attemptsUsed} attempts.`}</p>
+                    : outOfAttempts && <p className="text-sm text-red-800 mb-3">You are out of attempts.</p>
+                  }
+                  {feedback.rationale && (
+                    <div className={`mt-3 pt-3 border-t border-${feedback.isCorrect ? "green" : "red"}-200`}>
+                      <p className={`text-sm font-medium ${feedback.isCorrect ? "text-green-900" : "text-red-700"} mb-1`}
+                      >Rationale:</p>
+                      <p className={`text-sm ${feedback.isCorrect ? "text-green-800" : "text-red-800"}`}> {feedback.rationale}</p>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </CardContent>
